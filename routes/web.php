@@ -1,4 +1,7 @@
 <?php
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -24,17 +27,18 @@ Route::get('supplier/delete/{id}','VendorController@destroy');
 Route::post('supplier/update/{id}','VendorController@update');
 Route::get('vendor-list','VendorController@Vendor');
 
-// product category 
 
-Route::resource('category','CategoryController');
-// category delete 
-Route::get('category/delete/{id}','CategoryController@destroy');
-//category update
-Route::post('category/update/{id}','CategoryController@update');
 
+// -----------Product category-----------
+Route::resource('category','CategoryController'); // Rutas restful basicas pero no compatible para todos
+
+// -----------Rutas extra----------- 
+Route::get('category/delete/{id}','CategoryController@destroy'); // category delete 
+Route::post('category/update/{id}','CategoryController@update'); //category update
 Route::get('category-list','CategoryController@CategoryList');
-
 Route::get('all-category','CategoryController@AllCategory');
+
+
 
 // product 
 Route::resource('product','ProductController');

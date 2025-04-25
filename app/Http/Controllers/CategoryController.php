@@ -15,33 +15,25 @@ class CategoryController extends Controller
    */
   public function index()
   {
-    return view('category.category');
+    return view('category.category'); // Retorna la vista de categorias
   }
 
-  public function CategoryList(Request $request)
+  public function CategoryList(Request $request) // Recibe obj request = datos enviados desde el navegador
   {
-
-
-    $category = Category::orderBy('name', 'ASC');
-
-    if ($request->name != '') {
-
-      $category->where('name', 'LIKE', '%' . $request->name . '%');
+    $category = Category::orderBy('name', 'ASC'); // Construimos la consulta
+    if ($request->name != '') { // Verfica que el campo name fue enviado en el request
+      $category->where('name', 'LIKE', '%' . $request->name . '%'); // Agrega una condicion a la consulta para que filtre las categorias similares
     }
+    $category = $category->paginate(10); // Devuelve los resultados de 10 en 10
 
-    $category = $category->paginate(10);
-
-    return $category;
+    return $category; // Retorna el resultado (JSON) y esto se mostrara en el front
   }
 
 
 
   public function AllCategory()
   {
-
-    $cat   = Category::all();
-
-
+    $cat   = Category::all(); // Recupera todas las categorias en un array
     return $cat;
   }
 
@@ -61,21 +53,21 @@ class CategoryController extends Controller
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function store(Request $request)
+  public function store(Request $request) // Almacena una nueva categoria
   {
+    // Llamamos al validador integrado de Laravel
     $request->validate([
-      'name' => 'required|unique:categories'
+      'name' => 'required|unique:categories' // El campo name es obligatorio y que no exista en la tabla
     ]);
 
-
     try {
-      $category = new Category;
+      $category = new Category; // Crea una nueva instancia del modelo Category
 
-      $category->name = $request->name;
+      $category->name = $request->name; // name = name ingresado por el user
 
-      $category->save();
+      $category->save(); // Guardamos el obj en la db 
 
-      return response()->json(['status' => 'success', 'message' => 'Categoría agregada']);
+      return response()->json(['status' => 'success', 'message' => 'Categoría agregada']); 
     } catch (\Exception $e) {
 
       return response()->json(['status' => 'error', 'message' => '¡Algo salió mal!']);
@@ -88,7 +80,7 @@ class CategoryController extends Controller
    * @param  \App\Category  $category
    * @return \Illuminate\Http\Response
    */
-  public function show(Category $category)
+  public function show(Category $category) // Recibe automaticamente un obj Category
   {
     //
   }
@@ -99,8 +91,12 @@ class CategoryController extends Controller
    * @param  \App\Category  $category
    * @return \Illuminate\Http\Response
    */
-  public function edit(Category $category)
+  public function edit(Category $category) // Recibe automaticamente un obj Category
   {
+    // Laravel usa Route Model Binding, lo que significa que si en la ruta recibe un ID: 
+      // Busca automaticamente el registro en la tabla categorias
+      // Si lo encuentra, lo inyecta en categoria
+      // Si no error 404
     return $category;
   }
 
@@ -117,9 +113,7 @@ class CategoryController extends Controller
       'name' => 'required|unique:categories,name,' . $id,
     ]);
 
-
     try {
-
       $category = Category::find($id);
       $category->name = $request->name;
       $category->update();
